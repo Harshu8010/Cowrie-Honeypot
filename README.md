@@ -24,6 +24,7 @@ Cowrie Honeypot on Kali Linux (Port 2222)
        ↓
 (Optional) Splunk (Log Aggregation and Alerting)
 ```
+---
 
 ## 🧪 Simulated Attacks
 
@@ -38,8 +39,9 @@ Cowrie Honeypot on Kali Linux (Port 2222)
 ➡️ All logs and screenshots available in /screenshots/
 ➡️ Detailed session analysis available in /report.md
 
+---
 
-##📦 Project Structure
+## 📦 Project Structure
 
 ├── setup.md               # Installation & Configuration of Cowrie
 
@@ -47,10 +49,9 @@ Cowrie Honeypot on Kali Linux (Port 2222)
 
 ├── screenshots/           # Log screenshots and TTY captures
 
-├── config/                # Sample Cowrie configs (optional)
-
 └── README.md              # Project overview
 
+---
 
 ## 🛠️ Tools & Technologies
 
@@ -68,6 +69,7 @@ Splunk – (Optional) SIEM for log ingestion and dashboarding
 
 jq, tail, ttyplay – Log parsing and session analysis
 
+---
 
 ## 📈 Why This Project Matters
 
@@ -81,6 +83,7 @@ jq, tail, ttyplay – Log parsing and session analysis
 
 - Application of honeypots in threat detection and SOC workflows
   
+---
 
 ## 📚 References
 
