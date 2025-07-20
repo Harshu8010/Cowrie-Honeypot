@@ -89,7 +89,6 @@ This project utilized a combination of open-source tools and technologies to sim
 | `jq`       | JSON parsing and log formatting            |
 | `tail`     | Real-time log monitoring                   |
 | `nano`     | Editing Cowrie config files (`cowrie.cfg`) |
-| `netstat`  | Verifying active services and ports        |
 | `wget`/`curl` | Simulated file downloads by attackers  |
 
 These tools together formed a complete honeypot lab environment that was lightweight, modular, and effective for capturing attacker telemetry.
@@ -135,6 +134,9 @@ Cowrie is a low-interaction honeypot designed to simulate a real Linux system an
 - **Purpose**: Allows attackers to "successfully" authenticate and gain shell access, increasing interaction time.
 - **Example**: `root:password123` could be configured to always succeed.
 
+![dependencies](Screenshots/userdb.png)
+
+
 ### ✅ iii. Command Emulation
 
 - **Description**: Cowrie simulates output for commonly used Linux commands (e.g., `ls`, `uname`, `cat`, `top`, `ps`).
@@ -149,6 +151,9 @@ Cowrie is a low-interaction honeypot designed to simulate a real Linux system an
   - Text logs: `var/log/cowrie/cowrie.log`
   - JSON logs: `var/log/cowrie/cowrie.json`
   - TTY logs: `var/log/cowrie/tty/`
+
+![dependencies](Screenshots/tty.png)
+
 
 ### ✅ v. File Download Interception
 
@@ -203,7 +208,8 @@ Below is a detailed description of each attack type simulated during the project
   ```bash
   ssh root@192.168.56.102 -p 2222
   ```
-  
+![dependencies](Screenshots/ssh.png)
+
 ---
 
 #### 🧪 2. Brute Force Attack using Hydra
@@ -214,6 +220,8 @@ Below is a detailed description of each attack type simulated during the project
   ```bash
   hydra -l root -P rockyou.txt ssh://192.168.56.102 -s 2222
   ```
+
+![dependencies](Screenshots/bruteforce.png)
   
 ---
 
@@ -226,12 +234,18 @@ Below is a detailed description of each attack type simulated during the project
  scp -P 2222 malware.sh root@192.168.56.102:/tmp/
  ```
 
+![dependencies](Screenshots/scpload.png)
+
 ---
 
 #### 📂 4. Post-auth Command Execution
 
 - **Purpose**: To simulate how a real attacker might explore a compromised machine.
 - **Commands Used**: ls, cd /, cat /etc/passwd, whoami, uname -a
+
+![dependencies](Screenshots/commands.png)
+
+![dependencies](Screenshots/commands2.png)
 
 ---
 
@@ -243,6 +257,9 @@ Below is a detailed description of each attack type simulated during the project
 ```bash
 nmap -sV -A 192.168.56.102
 ```
+
+![dependencies](Screenshots/nmap.png)
+
 ---
 
 ## 📈 7. Log Analysis & Alerting
@@ -253,7 +270,21 @@ Each simulated attack was analyzed using Cowrie’s logs, which include plaintex
 
 ### 🧪 1. Brute Force Attack using Hydra
 
-- **Log Files**: `var/log/cowrie/cowrie.log`
+- **Log Files**: `var/log/cowrie/cowrie.log` `var/log/cowrie/cowrie.json`
+
+![dependencies](Screenshots/bruteforcelog.png)
+
+Demonstrates brute-force bot behavior or scanning attempts.
+Cowrie records brute-force password attempts:
+Multiple cowrie.login.failed events with guesses like nicole, 123456, rockyou, lovely.
+One cowrie.login.success using root:123456.
+Useful for creating blocklists and detecting password dictionary trends.
+
+**cowrie.json logs**
+
+![dependencies](Screenshots/brutejson1.png)
+
+![dependencies](Screenshots/brutejson2.png)
 
 ---
 
@@ -261,11 +292,30 @@ Each simulated attack was analyzed using Cowrie’s logs, which include plaintex
 
 - **Log Files**: `cowrie.log` `cowrie.json`
 
+![dependencies](Screenshots/sshlog.png)
+
+This shows:
+Full connection metadata (src_ip, dst_ip, session, port) under cowrie.session.connect.
+SSH version used by attacker (OpenSSH_9.2p1) helps identify toolset.
+cowrie.client.kex reveals SSH algorithms used, showing what the attacker’s SSH client supports.
+
+**cowrie.json logs**
+
+![dependencies](Screenshots/sshjson.png)
+
 ---
 
 ### 📂 3. Post-Authentication Command Execution
 
-- **Log Files**: `cowrie.json` `tty/ directory (session replay)`
+- **Log Files**: `cowrie.log` `tty/ directory (session replay)`
+
+![dependencies](Screenshots/commandslog.png)
+
+This provides insight into attacker intent — looking for user credentials, clearing screen, possibly preparing for further action.
+
+**tty/ playlog**
+
+[▶️ Watch tty session demo](Screenshots/tty_playlog.mp4)
 
 ---
 
@@ -273,11 +323,35 @@ Each simulated attack was analyzed using Cowrie’s logs, which include plaintex
 
 - **Log Files**: `cowrie.json` `Uploaded files saved in dl/`
 
+![dependencies](Screenshots/scplog.png)
+
+JSON logs show:
+Attacker's environment variables (LC_TELEPHONE, LC_MEASUREMENT, etc.) reveal system locale and can hint at origin.
+cowrie.session.file_upload event shows a file uploaded with hash and destination.
+Helpful for malware analysis and attribution.
+
+**cowrie.json**
+
+![dependencies](Screenshots/scpjson.png)
+
+![dependencies](Screenshots/scpjson2.png)
+
+**Uploaded file saved in downloads**
+
+![dependencies](Screenshots/scpdownload.png)
+
 ---
 
 ### 🔍 5. Network Scanning via Nmap
 
 - **Log Files**: `var/log/cowrie/cowrie.log`
+
+This log (tail -f var/log/cowrie/cowrie.log) shows repeated SSH connection attempts from IP 192.168.56.5. Each connection:
+Is accepted on port 2222 (Cowrie default).
+Fails at key exchange or SSH fingerprint verification.
+Ends with a connection lost message (within ~0.1 to 1.1 seconds).
+
+![dependencies](Screenshots/nmaplog.png)
 
 ---
 
