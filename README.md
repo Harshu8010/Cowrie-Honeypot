@@ -38,13 +38,19 @@ Cowrie Honeypot on Kali Linux (Port 2222)
 ➡️ All logs and screenshots available in /screenshots/
 ➡️ Detailed session analysis available in /report.md
 
+
 ##📦 Project Structure
 
 ├── setup.md               # Installation & Configuration of Cowrie
+
 ├── report.md              # Attack simulation, logs, analysis, findings
+
 ├── screenshots/           # Log screenshots and TTY captures
+
 ├── config/                # Sample Cowrie configs (optional)
+
 └── README.md              # Project overview
+
 
 ## 🛠️ Tools & Technologies
 
